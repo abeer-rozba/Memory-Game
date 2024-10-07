@@ -5,19 +5,23 @@ const cards = []
 // variables
 
 
-
 // cached elements
-const cardElement = document.querySelector(".card")
+const cardElements = document.querySelectorAll(".card")
 
 // functions
-const init = () => {
-  flipCard()
+const init = (event) => {
+  flipCard(event)
 }
   
 
-const flipCard = () => {
-  cardElement.classList.toggle("flipCard")
+const flipCard = (event) => {
+  const firstCard = event.target.parentElement
+  firstCard.classList.toggle("flipCard")
 }
 
+
 // event listeners
-cardElement.addEventListener("click", init)
+cardElements.forEach((card) => {
+  cards.push(card.id)
+  card.addEventListener("click", init)
+})
