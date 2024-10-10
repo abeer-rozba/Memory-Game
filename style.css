@@ -1,4 +1,4 @@
-body {
+/* body {
   margin: 0;
   background-color: bisque;
   height: 100vh;
@@ -54,5 +54,73 @@ body {
 }
 
 .flipCard {
+  transform: rotateY(180deg);
+} /* Reference: https://jefferson-cuartas.medium.com/how-to-create-a-flip-card-effect-using-javascript-767dd945210c */
+
+body {
+  background-color: bisque;
+  height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-family: monospace;
+}
+
+.container {
+  background-color: brown;
+  height: 450px;
+  width: 450px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-rows: auto;
+}
+
+#reset {
+  background-color: burlywood;
+  padding: 10px;
+  border-radius: 5px;
+  color: brown;
+  border: none;
+  cursor: pointer;
+  font-family: monospace;
+}
+
+.card {
+  height: 80px;
+  width: 150px;
+  background-color: palevioletred;
+  margin: auto;
+  cursor: pointer;
+  font-size: 50px;
+  text-align: center;
+  perspective: 1000px;
+}
+
+.inner {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
+}
+
+.front {
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.back {
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.flip {
   transform: rotateY(180deg);
 } /* Reference: https://jefferson-cuartas.medium.com/how-to-create-a-flip-card-effect-using-javascript-767dd945210c */
