@@ -72,6 +72,7 @@ body {
 
 .container {
   background-color: brown;
+  border-radius: 10px;
   height: 450px;
   width: 450px;
   display: grid;
@@ -90,6 +91,7 @@ body {
 }
 
 .card {
+  border-radius: 5px;
   height: 80px;
   width: 150px;
   background-color: palevioletred;
@@ -113,6 +115,7 @@ body {
   background-color: pink;
   backface-visibility: hidden;
   transform: rotateY(180deg);
+  border-radius: 5px;
 }
 
 .back {
@@ -124,3 +127,5 @@ body {
 .flip {
   transform: rotateY(180deg);
 } /* Reference: https://jefferson-cuartas.medium.com/how-to-create-a-flip-card-effect-using-javascript-767dd945210c */
+
+/* There's something wrong with the flipping transition, it looks weird */
