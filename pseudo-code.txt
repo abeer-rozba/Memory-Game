@@ -1,13 +1,29 @@
 Memory Game:
-  - Start game button that triggers an initialization function (OK) to set the game as follows:
-    * shuffles an array of cards of a fixed size.
-    * displays the cards for 3 seconds then flips them.
-  - When the player clicks a card, it flips. The value of the clicked card is stored in a variable,
-  then the event listener wait for a second card to be clicked and stored to call a comparison function.
-  - The comparison function will check if the two cards are identical:
-    * if they are, the cards will become un-clickable, and their values will be stored in a match array.
-    * if they are not, the cards will flip back.
-  - After every comparison, the winning function will be called:
-    * it checks if all the slots in the match array are taken, if they are, it's a win, else the game continues.
-    * if winner is true, a message is rendered to the user and a restart button is displayed.
-  - The restart button calls the init function again and clears the arrays.
+  - setUpCards() function:
+    * first calls shuffleCards() function to randomize cards array
+    * then creates divs of cards according to the new randomized array
+  - shuffleCards() function:
+    * shuffles the cards array
+  - Cards event listener:
+    * will listen for clicks on each card
+    * calls flipCard() function
+  - flipCard() function:
+    * flips the clicked card
+    * stores the first and second clicked cards
+    * calls the compareCards() function
+  - compareCards() function:
+    * checks if cards match or not
+    * if they match, it disables clicking on both cards and stores their values in an array to check for win later
+    * if they don't match, it flips them back after a timeout and clears the variables
+    * calls checkForWin() function
+  - checkForWin() function:
+    * checks if the matches array length equals the length of the cards array
+    * if it does, it means all cards were matched. It displays a win message
+    * if not, the game continues
+  - Reset button event listener:
+    * listens for clicks on the reset button
+    * calls the reset function
+  - reset() function:
+    * calls setUpCards() function
+    * clears relevant variables
+    * clears matches array
