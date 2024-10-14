@@ -1,66 +1,24 @@
-/* // constants
-const cards = [] // will save selected cards class for compare function
-
-
-// variables
-let match = false
-let firstCard = null
-
-// cached elements
-const cardElements = document.querySelectorAll(".card") // saves all cards in memory
-
-// functions
-const init = (event) => { // main function
-  flipCard(event)
-}
-  
-
-const flipCard = (event) => {
-  const clickedCard = event.currentTarget // saves the parent div of selected card
-  cards.push(clickedCard.classList[1]) // saves second class to compare
-  clickedCard.classList.toggle("flipCard") // flips the card
-  if (firstCard === null) {
-    firstCard = clickedCard
-  }
-  else { compare(firstCard, clickedCard)}
-}
-
-const compare = (firstCard, clickedCard) => {
-  if (cards[0] === cards[1]) { // compares card classes to determine a match
-    match = true // updates the match value
-    clickedCard.removeEventListener("click", init) // disables clicking on the matched card again
-    firstCard.removeEventListener("click", init)
-  }
-  else {
-    match = false 
-    setTimeout(() => {
-      // firstCard.classList.remove("flipCard")
-      clickedCard.classList.remove("flipCard")
-    }, 1000)
-  }
-  firstCard = null // resets the card to compare
-  cards.length = 0
-}
-
-// event listeners
-cardElements.forEach((card) => { // listens for user clicks on cards
-  card.addEventListener("click", init)
-}) */
-
-
-
-
-
 // constants
 const cards = ["A", "A", "B", "B", "C", "C", "D", "D"] // stores the cards
+const matches = []
 
 
 // variables
-let firstCard = null, secondCard, firstClickedCard, cardClass
+let firstCard = null, secondCard = null, firstClickedCard = null, cardClass = null, win = false
 
+const checkStatus = (funcName) => {
+  console.log({
+    "Function": funcName,
+    "First Card": firstCard,
+    "Second Card": secondCard,
+    "First Card Clicked": firstClickedCard
+  })
+}
 
 // cached elements
 const containerElement = document.querySelector(".container") // to append cards to
+const messageElement = document.querySelector("p")
+const resetButton = document.querySelector("#reset")
 
 
 // functions
@@ -86,62 +44,85 @@ const setUpCards = () => {
 
 const flipCard = (event) => {
   cardClass = event.currentTarget.children[0] // to access the card classes easily
+  if (cardClass.classList.contains("flip")) {
+    return;
+  }
+  else {
   cardClass.classList.toggle("flip") // flips the card div
   if (firstCard === null) { // if no card was clicked previously
     firstClickedCard = event.currentTarget.id // fetch the card id for the second condition
-    console.log(firstClickedCard);
     firstCard = event.currentTarget // store the clicked card
-    console.log(firstCard);
   }
   else if (event.currentTarget.id === firstClickedCard) { // check if the same card was clicked twice in a row
     firstCard = null // reset the card value and id
     firstClickedCard = null
-    console.log(firstClickedCard);
-    console.log(firstCard);
   }
   else {
     secondCard = event.currentTarget // store the second card to compare
-    compareCards(firstCard, secondCard)
-  }
+    compareCards()
+  } }
 }
 
-const compareCards = (firstCard, secondCard) => {
+const compareCards = () => {
   if (firstCard.textContent === secondCard.textContent) // compare the cards values after ensuring they're not the same card
   {
-    console.log("match"); // removeEventListener is not working to disable clicking on matched cards!!
+    matches.push(firstCard.id)
+    matches.push(secondCard.id)
+    firstCard = null 
+    secondCard = null
+    firstClickedCard = null
+    checkForWin()
   }
   else if (firstCard.textContent !== secondCard.textContent) { // flip non-matching cards back after a delay
     setTimeout(() => {
-      firstCard.children[0].classList.remove("flip") // works
+      firstCard.children[0].classList.remove("flip")
       secondCard.children[0].classList.remove("flip")
-      firstCard = null // those three lines are clearing the variables but the first card to be clicked afterwards
-      secondCard = null // is still considered the second card and skips immediately to the comparing function
+      firstCard = null
+      secondCard = null
       firstClickedCard = null
-      console.log(firstCard);
-      console.log(secondCard);
-      console.log(firstClickedCard);
     }, 1000)
   }
 }
 
+const checkForWin = () => {
+  if (matches.length === cards.length) {
+    win = true
+    messageElement.textContent = "You win!"
+  }
+  else {
+    return;
+  }
+}
+
+const shuffle = () => {
+  for (let i=cards.length-1; i>=0; i--) {
+    let randomIndex = Math.floor(Math.random() * (i+1))
+    let temp = cards[randomIndex]
+    cards[randomIndex] = cards[i]
+    cards[i] = temp
+  }
+}
+
+const resetCards = () => {
+  shuffle()
+}
+
+shuffle()
 setUpCards()
 // event listeners
-const cardElements = document.querySelectorAll(".card") // cache cards that were created dynamically
-// this only works if it was placed here for some reason (?) doesn't work if I move this line somewhere else
+const cardElements = document.querySelectorAll(".card")
 const cardElementsArray = Array.from(cardElements) // convert node list to an array
 
 cardElementsArray.forEach((card) => { // listen for clicks on every card
   card.addEventListener("click", (event) => flipCard(event))
 })
 
-/*
-
-What am I struggling with?
-
-- Matching cards still listen for clicks. How do I disable it?
-- If cards don't match, the cards values do not reset. Instead, the first card to be clicked after the timeout
-will still be compared with the first card from before the timeout. This ruins the whole comparison process. Why?
-- I read about the shuffle method online but I can't understand how it works.
-
-
-*/
+resetButton.addEventListener("click", () => {
+  cardClass = null
+  win = false
+  messageElement.textContent = ""
+  cardElementsArray.forEach((item) => {
+    item.textContent = ""
+  })
+  resetCards()
+})
