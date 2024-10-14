@@ -1,92 +1,63 @@
 // constants
 const cards = ["A", "A", "B", "B", "C", "C", "D", "D"] // stores the cards
-const matches = []
-
+const matches = [] // keeps track of number of matched cards
 
 // variables
-let firstCard = null, secondCard = null, firstClickedCard = null, cardClass = null, win = false
-
-const checkStatus = (funcName) => {
-  console.log({
-    "Function": funcName,
-    "First Card": firstCard,
-    "Second Card": secondCard,
-    "First Card Clicked": firstClickedCard
-  })
-}
+let firstCard = null, secondCard = null, cardClass = null
 
 // cached elements
-const containerElement = document.querySelector(".container") // to append cards to
-const messageElement = document.querySelector("p")
-const resetButton = document.querySelector("#reset")
+const messageElement = document.querySelector("p") // to display win message
+const resetButton = document.querySelector("#reset") // to listen to button clicks
+const cardElements = document.querySelectorAll(".card") // to listen to card clicks
+const cardFrontElements = document.querySelectorAll(".front") // to assign cards values
+const innerCards = document.querySelectorAll(".inner") // to remove flip class
 
 
 // functions
-const setUpCards = () => {
-  let counter = 0 // to assign a unique id to each card
-  cards.forEach((card) => { // creates as much cards as there are in the cards array
-    const mainCard = document.createElement("div")
-    containerElement.appendChild(mainCard)
-    mainCard.classList.add("card")
-    mainCard.id = counter++ // id is only on the card that will listen for clicks
-    const cardInner = document.createElement("div")
-    mainCard.appendChild(cardInner)
-    cardInner.classList.add("inner")
-    const cardFront = document.createElement("div")
-    cardFront.textContent = card
-    cardInner.appendChild(cardFront)
-    cardFront.classList.add("front")
-    const cardBack = document.createElement("div")
-    cardInner.appendChild(cardBack)
-    cardBack.classList.add("back")
+const setUpCards = () => { 
+  let counter = 0
+  cardFrontElements.forEach((card) => {
+    card.textContent = cards[counter]
+    counter++
   })
-}
+} // iterates over cards array using the counter, and assigns each card the corresponding value 
 
 const flipCard = (event) => {
-  cardClass = event.currentTarget.children[0] // to access the card classes easily
+  cardClass = event.currentTarget.children[0] // stored to access the inner div classes easily
   if (cardClass.classList.contains("flip")) {
-    return;
+    return; // disables clicking on the same card multiple times in a row or clicking again on matched cards
   }
   else {
-  cardClass.classList.toggle("flip") // flips the card div
-  if (firstCard === null) { // if no card was clicked previously
-    firstClickedCard = event.currentTarget.id // fetch the card id for the second condition
-    firstCard = event.currentTarget // store the clicked card
-  }
-  else if (event.currentTarget.id === firstClickedCard) { // check if the same card was clicked twice in a row
-    firstCard = null // reset the card value and id
-    firstClickedCard = null
+  cardClass.classList.toggle("flip") // flips the card
+  if (firstCard === null) { // tracks the first and second cards to be clicked
+    firstCard = event.currentTarget
   }
   else {
-    secondCard = event.currentTarget // store the second card to compare
+    secondCard = event.currentTarget
     compareCards()
   } }
 }
 
-const compareCards = () => {
-  if (firstCard.textContent === secondCard.textContent) // compare the cards values after ensuring they're not the same card
-  {
-    matches.push(firstCard.id)
+const compareCards = () => { // compares clicked cards
+  if (firstCard.textContent === secondCard.textContent) { // stores the id of matching cards to track remaining cards
+    matches.push(firstCard.id) 
     matches.push(secondCard.id)
-    firstCard = null 
+    firstCard = null // clears comparison variables for the card to be clicked next
     secondCard = null
-    firstClickedCard = null
     checkForWin()
   }
-  else if (firstCard.textContent !== secondCard.textContent) { // flip non-matching cards back after a delay
+  else if (firstCard.textContent !== secondCard.textContent) { // flips non-matching cards back after a delay
     setTimeout(() => {
       firstCard.children[0].classList.remove("flip")
       secondCard.children[0].classList.remove("flip")
       firstCard = null
       secondCard = null
-      firstClickedCard = null
     }, 1000)
   }
 }
 
 const checkForWin = () => {
-  if (matches.length === cards.length) {
-    win = true
+  if (matches.length === cards.length) { // checks if all cards have been matched
     messageElement.textContent = "You win!"
   }
   else {
@@ -94,7 +65,7 @@ const checkForWin = () => {
   }
 }
 
-const shuffle = () => {
+const shuffle = () => { // randomizes the card positions in cards array
   for (let i=cards.length-1; i>=0; i--) {
     let randomIndex = Math.floor(Math.random() * (i+1))
     let temp = cards[randomIndex]
@@ -103,26 +74,33 @@ const shuffle = () => {
   }
 }
 
-const resetCards = () => {
-  shuffle()
+const clearAll = () => { // resets the content for the next game
+  cardClass = null
+  matches.length = 0
+  messageElement.textContent = ""
 }
 
-shuffle()
-setUpCards()
-// event listeners
-const cardElements = document.querySelectorAll(".card")
-const cardElementsArray = Array.from(cardElements) // convert node list to an array
+const flipBack = () => { // flips back all cards
+  innerCards.forEach((card) => {
+    if (card.classList.contains("flip")) {
+      card.classList.remove("flip")
+    }
+  })
+}
 
-cardElementsArray.forEach((card) => { // listen for clicks on every card
+
+// event listeners
+cardElements.forEach((card) => { // listen for clicks on every card to trigger flipping function
   card.addEventListener("click", (event) => flipCard(event))
 })
 
-resetButton.addEventListener("click", () => {
-  cardClass = null
-  win = false
-  messageElement.textContent = ""
-  cardElementsArray.forEach((item) => {
-    item.textContent = ""
-  })
-  resetCards()
+resetButton.addEventListener("click", () => { // resets game variables then shuffles and restarts the game
+  clearAll()
+  flipBack()
+  shuffle()
+  setUpCards()
 })
+
+// function calls
+shuffle() // initial status of the game when the page loads
+setUpCards()
