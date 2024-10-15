@@ -42,8 +42,6 @@ const compareCards = () => { // compares clicked cards
   if (firstCard.textContent === secondCard.textContent) { // stores the id of matching cards to track remaining cards
     matches.push(firstCard.id) 
     matches.push(secondCard.id)
-    firstCard.style.cursor = "default"
-    secondCard.style.cursor = "default"
     checkForWin()
     whichBear()
     firstCard = null // clears comparison variables for the card to be clicked next
@@ -151,7 +149,7 @@ resetButton.addEventListener("click", () => { // resets game variables then shuf
   clearAll()
   setTimeout(() => { // to prevent the new cards from showing behind the current cards
     shuffle()
-  setUpCards()
+    setUpCards()
   }, 1000);
 })
 
