@@ -1,12 +1,12 @@
 // constants
-const cards = ["A", "A", "B", "B", "C", "C", "D", "D"] // stores the cards
+const cards = ["🐻", "🐻", "🐻‍❄️", "🐻‍❄️", "🐨", "🐨", "🐼", "🐼"] // stores the cards
 const matches = [] // keeps track of number of matched cards
 
 // variables
-let firstCard = null, secondCard = null, cardClass = null
+let firstCard = null, secondCard = null, cardClass = null, win = false
 
 // cached elements
-const messageElement = document.querySelector("p") // to display win message
+const messageElement = document.querySelector("h3") // to display win message
 const resetButton = document.querySelector("#reset") // to listen to button clicks
 const cardElements = document.querySelectorAll(".card") // to listen to card clicks
 const cardFrontElements = document.querySelectorAll(".front") // to assign cards values
@@ -42,9 +42,12 @@ const compareCards = () => { // compares clicked cards
   if (firstCard.textContent === secondCard.textContent) { // stores the id of matching cards to track remaining cards
     matches.push(firstCard.id) 
     matches.push(secondCard.id)
+    firstCard.style.cursor = "default"
+    secondCard.style.cursor = "default"
+    checkForWin()
+    whichBear()
     firstCard = null // clears comparison variables for the card to be clicked next
     secondCard = null
-    checkForWin()
   }
   else if (firstCard.textContent !== secondCard.textContent) { // flips non-matching cards back after a delay
     setTimeout(() => {
@@ -56,9 +59,59 @@ const compareCards = () => { // compares clicked cards
   }
 }
 
+const whichBear = () => {
+  if (firstCard.innerText === "🐻") {
+    messageElement.textContent = "You matched Grizz!"
+      setTimeout(() => {
+        messageElement.textContent = "He's my favorite :D"
+    }, 1500);
+    if (win === true) {
+      setTimeout(() => {
+        messageElement.textContent = "And... all the cards have been matched!"
+      }, 3000);
+    }
+  }
+
+  if (firstCard.innerText === "🐻‍❄️") {
+    messageElement.textContent = "You matched Ice Bear!"
+      setTimeout(() => {
+        messageElement.textContent = "You're doing great!"
+      }, 1500);
+    if (win === true) {
+      setTimeout(() => {
+        messageElement.textContent = "And... all the cards have been matched!"
+      }, 3000)
+    }
+  }
+
+  if (firstCard.innerText === "🐼") {
+    messageElement.textContent = "You matched Panda!"
+      setTimeout(() => {
+        messageElement.textContent = "This is fun!"
+      }, 1500);
+    if (win === true) {
+      setTimeout(() => {
+        messageElement.textContent = "And... all the cards have been matched!"
+      }, 3000)
+    }
+  }
+
+  if (firstCard.innerText === "🐨") {
+    messageElement.textContent = "You matched Nom Nom!"
+      setTimeout(() => {
+        messageElement.textContent = "He's not a bear but oh well.."
+      }, 1500)
+      if (win === true) {
+        setTimeout(() => {
+          messageElement.textContent = "And... all the cards have been matched!"
+        }, 3000)
+      }
+  }
+}
+
 const checkForWin = () => {
   if (matches.length === cards.length) { // checks if all cards have been matched
-    messageElement.textContent = "You win!"
+    win = true
   }
   else {
     return;
@@ -77,7 +130,7 @@ const shuffle = () => { // randomizes the card positions in cards array
 const clearAll = () => { // resets the content for the next game
   cardClass = null
   matches.length = 0
-  messageElement.textContent = ""
+  messageElement.textContent = "Let's match the bears!"
 }
 
 const flipBack = () => { // flips back all cards
@@ -88,17 +141,18 @@ const flipBack = () => { // flips back all cards
   })
 }
 
-
 // event listeners
 cardElements.forEach((card) => { // listen for clicks on every card to trigger flipping function
   card.addEventListener("click", (event) => flipCard(event))
 })
 
 resetButton.addEventListener("click", () => { // resets game variables then shuffles and restarts the game
-  clearAll()
   flipBack()
-  shuffle()
+  clearAll()
+  setTimeout(() => { // to prevent the new cards from showing behind the current cards
+    shuffle()
   setUpCards()
+  }, 1000);
 })
 
 // function calls
