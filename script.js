@@ -3,7 +3,7 @@ const cards = ["🐻", "🐻", "🐻‍❄️", "🐻‍❄️", "🐨", "🐨",
 const matches = [] // keeps track of number of matched cards
 
 // variables
-let firstCard = null, secondCard = null, cardClass = null, win = false
+let firstCard = null, secondCard = null, cardClass = null, win = false, counter = 0, lossCounter = 0
 
 // cached elements
 const messageElement = document.querySelector("h3") // to display win message
@@ -29,13 +29,14 @@ const flipCard = (event) => {
   }
   else {
   cardClass.classList.toggle("flip") // flips the card
-  if (firstCard === null) { // tracks the first and second cards to be clicked
-    firstCard = event.currentTarget
+    if (firstCard === null) { // tracks the first and second cards to be clicked
+      firstCard = event.currentTarget
+    }
+    else {
+      secondCard = event.currentTarget
+      compareCards()
+    }
   }
-  else {
-    secondCard = event.currentTarget
-    compareCards()
-  } }
 }
 
 const compareCards = () => { // compares clicked cards
@@ -48,14 +49,15 @@ const compareCards = () => { // compares clicked cards
     secondCard = null
   }
   else if (firstCard.textContent !== secondCard.textContent) { // flips non-matching cards back after a delay
-    setTimeout(() => {
+      lossCounter++
+      checkForLoss()
+      setTimeout(() => {
       firstCard.children[0].classList.remove("flip")
       secondCard.children[0].classList.remove("flip")
       firstCard = null
       secondCard = null
-    }, 1000)
+    }, 1000) }
   }
-}
 
 const whichBear = () => {
   if (firstCard.innerText === "🐻") {
@@ -116,6 +118,24 @@ const checkForWin = () => {
   }
 }
 
+const checkForLoss = () => {
+  if (lossCounter===3) {
+    messageElement.textContent = "You lose :("
+    innerCards.forEach((card) => {
+      if (card.classList.contains("flip")) {
+      card.classList.remove("flip")
+    }
+      card.classList.toggle("flip")
+    })
+    firstCard = null
+    secondCard = null
+    setTimeout(() => {
+      reset() 
+    }, 1500);
+  }
+  else {return;}
+}
+
 const shuffle = () => { // randomizes the card positions in cards array
   for (let i=cards.length-1; i>=0; i--) {
     let randomIndex = Math.floor(Math.random() * (i+1))
@@ -126,6 +146,7 @@ const shuffle = () => { // randomizes the card positions in cards array
 }
 
 const clearAll = () => { // resets the content for the next game
+  lossCounter = 0
   cardClass = null
   matches.length = 0
   messageElement.textContent = "Let's match the bears!"
@@ -139,18 +160,22 @@ const flipBack = () => { // flips back all cards
   })
 }
 
-// event listeners
-cardElements.forEach((card) => { // listen for clicks on every card to trigger flipping function
-  card.addEventListener("click", (event) => flipCard(event))
-})
-
-resetButton.addEventListener("click", () => { // resets game variables then shuffles and restarts the game
+const reset = () => {
   flipBack()
   clearAll()
   setTimeout(() => { // to prevent the new cards from showing behind the current cards
     shuffle()
     setUpCards()
   }, 1000);
+}
+
+// event listeners
+cardElements.forEach((card) => { // listen for clicks on every card to trigger flipping function
+  card.addEventListener("click", (event) => flipCard(event))
+})
+
+resetButton.addEventListener("click", () => { // resets game variables then shuffles and restarts the game
+  reset()
 })
 
 // function calls
