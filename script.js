@@ -120,7 +120,7 @@ const checkForWin = () => {
 
 const checkForLoss = () => {
   if (lossCounter===3) {
-    messageElement.textContent = "You lose :("
+    messageElement.textContent = "You mismatched three times.. you lost :("
     innerCards.forEach((card) => {
       if (card.classList.contains("flip")) {
       card.classList.remove("flip")
@@ -130,8 +130,8 @@ const checkForLoss = () => {
     firstCard = null
     secondCard = null
     setTimeout(() => {
-      reset() 
-    }, 1500);
+      reset()
+    }, 2000);
   }
   else {return;}
 }
